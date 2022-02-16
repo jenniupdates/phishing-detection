@@ -1,4 +1,6 @@
-# is460
+# is460 Machine Learning module
 ai project
 
-idea: 
+idea: scam detection and prevention
+
+
