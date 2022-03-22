@@ -1,6 +1,6 @@
 # is460 Machine Learning module
 ai project
 
-idea: scam detection and prevention
+idea: email fraud detection and prevention
 
-
+chrome extension: not deployed yet
