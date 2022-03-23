@@ -1,5 +1,5 @@
 # is460 Machine Learning module
-ai project
+AI project
 
 idea: email fraud detection and prevention
 
