@@ -1,0 +1,78 @@
+Downloading data from https://storage.googleapis.com/tensorflow/tf-keras-datasets/imdb.npz
+17465344/17464789 [==============================] - 1s 0us/step
+17473536/17464789 [==============================] - 1s 0us/step
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 868 entries, 0 to 867
+Data columns (total 2 columns):
+ #   Column  Non-Null Count  Dtype
+---  ------  --------------  -----
+ 0   text    868 non-null    object
+ 1   class   868 non-null    int64
+dtypes: int64(1), object(1)
+memory usage: 13.7+ KB
+560 308
+C:\Users\ysimp\anaconda3\lib\site-packages\bs4\__init__.py:417: MarkupResemblesLocatorWarning: "http://www.brookings.edu/—/media/Files/rc/reports/2010/08_arab_opinion_poll_telhami/08_arab_opinion_pollielhami.pdf" looks like a URL. Beautiful Soup is not an HTTP client. You should probably use an HTTP client like requests to get the document behind the URL, and feed that document to Beautiful Soup.
+  warnings.warn(
+C:\Users\ysimp\anaconda3\lib\site-packages\bs4\__init__.py:417: MarkupResemblesLocatorWarning: "http://www.suntimes.com/2072121desiree-rogers-quits-022610.article" looks like a URL. Beautiful Soup is not an HTTP client. You should probably use an HTTP client like requests to get the document behind the URL, and feed that document to Beautiful Soup.
+  warnings.warn(
+accuracy: 0.9443978765018162
+              precision    recall  f1-score   support
+           0       0.98      0.92      0.95      2005
+           1       0.91      0.97      0.94      1574
+    accuracy                           0.94      3579
+   macro avg       0.94      0.95      0.94      3579
+weighted avg       0.95      0.94      0.94      3579
+C:\Users\ysimp\anaconda3\lib\site-packages\pandas\core\arraylike.py:358: RuntimeWarning: divide by zero encountered in log
+  result = getattr(ufunc, method)(*inputs, **kwargs)
+accuracy: 0.9622799664710813
+              precision    recall  f1-score   support
+           0       0.94      1.00      0.97      2005
+           1       1.00      0.91      0.96      1574
+    accuracy                           0.96      3579
+   macro avg       0.97      0.96      0.96      3579
+weighted avg       0.96      0.96      0.96      3579
+accuracy: 0.9812796870634255
+              precision    recall  f1-score   support
+           0       0.99      0.97      0.98      2005
+           1       0.97      0.99      0.98      1574
+    accuracy                           0.98      3579
+   macro avg       0.98      0.98      0.98      3579
+weighted avg       0.98      0.98      0.98      3579
+Accuracy: 0.9812796870634255
+Precision: 0.9654107473749228
+Recall: 0.9930114358322745
+Length of word Index: 10039
+First 5 elements in the word_index dictionary: {'the': 1, 'to': 2, 'and': 3, 'of': 4, 'a': 5}
+First comment text in training set:
+ [14, 10, 2, 4363, 1458, 179, 383, 171, 111, 1933, 8, 65, 106, 62, 3, 180, 23, 18, 808, 324, 179, 111, 948, 75, 249, 179, 27, 1459, 3022, 4364, 4365, 171, 549, 3, 582, 179, 383, 171, 111, 21, 3023, 809, 25, 2346]
+Shape of padded sequence list:
+ (608, 1000)
+First comment text in training set - 0 for padding - only last 50 sequences as the rest are paddings:
+ [   0    0    0    0    0    0   14   10    2 4363 1458  179  383  171
+  111 1933    8   65  106   62    3  180   23   18  808  324  179  111
+  948   75  249  179   27 1459 3022 4364 4365  171  549    3  582  179
+  383  171  111   21 3023  809   25 2346]
+Model: "sequential_1"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #
+=================================================================
+ embedding_1 (Embedding)     (None, None, 128)         2560000
+ conv1d_3 (Conv1D)           (None, None, 128)         82048
+ max_pooling1d_2 (MaxPooling  (None, None, 128)        0
+ 1D)
+ conv1d_4 (Conv1D)           (None, None, 128)         82048
+ max_pooling1d_3 (MaxPooling  (None, None, 128)        0
+ 1D)
+ conv1d_5 (Conv1D)           (None, None, 128)         82048
+ global_max_pooling1d_1 (Glo  (None, 128)              0
+ balMaxPooling1D)
+ dense_2 (Dense)             (None, 128)               16512
+ dense_3 (Dense)             (None, 1)                 129
+=================================================================
+Total params: 2,822,785
+Trainable params: 2,822,785
+Non-trainable params: 0
+_________________________________________________________________
+(456, 1000) (456, 1) (152, 1000) (152, 1)
+4/4 [==============================] - 1s 276ms/step - loss: 0.6824 - auc: 0.6435 - val_loss: 0.6711 - val_auc: 0.7927
+560 308

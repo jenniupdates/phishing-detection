@@ -1,0 +1,26 @@
+{
+    "os": "Windows-10-10.0.19041-SP0",
+    "python": "3.8.8",
+    "heartbeatAt": "2022-04-04T11:02:01.824901",
+    "startedAt": "2022-04-04T11:01:53.818106",
+    "docker": null,
+    "gpu": "NVIDIA GeForce GTX 1650",
+    "gpu_count": 1,
+    "cpu_count": 16,
+    "cuda": null,
+    "args": [
+        "-f",
+        "C:\\Users\\ysimp\\AppData\\Roaming\\jupyter\\runtime\\kernel-55429dd2-1880-4a7e-950b-f65886908321.json"
+    ],
+    "state": "running",
+    "program": "Documents/GitHub/is460-ml/YS EDA and Training Models v1.3.ipynb",
+    "root": "C:/Users/ysimp/Documents/GitHub/is460-ml",
+    "git": {
+        "remote": "https://github.com/jenniupdates/phishing-detection.git",
+        "commit": "3bcc65bda7d5bfc0585a466a71d7a3b527b0370c"
+    },
+    "email": "ysimptstuff@gmail.com",
+    "host": "DESKTOP-GFR3L4F",
+    "username": "ysimp",
+    "executable": "C:\\Users\\ysimp\\anaconda3\\python.exe"
+}
