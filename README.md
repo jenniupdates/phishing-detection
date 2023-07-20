@@ -18,15 +18,20 @@ What we did different from most studies out there who applied machine learning m
 
 ## Project Methodoloy
 First, we break down the email into 3 components: Text Message, Sentiment of the Email, and URLs of the email.
+Secondly, we clean the dataset using regex handling, spacing issues, etc.
 Then we will conduct analysis on each of them, train them on different models and identify the best models for each component.
 After that, we will combine the models together to form an Ensemble Model. The Ensemble Model with be used to test on a foreign dataset. 
 Finally, we will get the performance of the Ensemble Model and compare the results with that of other models respectively.
 
 ## Some Results
-While the final Ensemble Model does seem to have some suspicious results, the accuracy of each individual models are still relatively high. Here are some of them:
+While the final Ensemble Model does seem to have some suspicious results, the accuracy of each individual models are still relatively high. 
+
+Here are some of them (based on original ipynb results):
+
 ![email text analysis results](/images/email_text_results.png?raw=true "email text analysis results")
 ![email text sentiment subjectivity score results](/images/email_text_sentiment_results.png?raw=true "email text sentiment subjectivity score analysis results")
 ![url results](/images/url_results.png?raw=true "url analysis results")
 
 ## Future works
-Chrome extension that can automate detection and analysis of gmail content, presenting individual model results 
+1. Chrome extension that can automate detection and analysis of gmail content, presenting individual model results 
+2. Allow model to be used as Web API
