@@ -1,2 +1,3 @@
 .DS_Store
-cleaned_datasets/
+cleaned_datasets/creditcard1.csv
+cleaned_datasets/enronv1.csv
