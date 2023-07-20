@@ -6,18 +6,18 @@ import pandas as pd
 import numpy as np
 import re
 from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, f1_score
-from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split
 
 import seaborn as sns
 import matplotlib.pyplot as plt
-import time
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 
 import pickle
+from joblib import Parallel, delayed
+import multiprocessing
 
 nltk.download('stopwords')
 nltk.download('punkt')
@@ -30,34 +30,6 @@ df = pd.read_csv(path)
 df.dropna(inplace=True)
 
 
-# Generate the confusion matrix
-def plot_cm(y_actual, y_pred):
-    cf_matrix = confusion_matrix(y_actual, y_pred)
-
-    group_names = ['True Neg', 'False Pos', 'False Neg', 'True Pos']
-
-    group_percentages = ["{0:.2%}".format(value) for value in
-                         cf_matrix.flatten()/np.sum(cf_matrix)]
-
-    labels = [f"{v1}\n{v2}" for v1, v2 in
-              zip(group_names, group_percentages)]
-
-    labels = np.asarray(labels).reshape(2, 2)
-
-    ax = sns.heatmap(cf_matrix, annot=labels, fmt='', cmap='Blues')
-
-    ax.set_title('Seaborn Confusion Matrix with labels\n\n')
-    ax.set_xlabel('\nPredicted Values')
-    ax.set_ylabel('Actual Values ')
-
-    # Ticket labels - List must be in alphabetical order
-    ax.xaxis.set_ticklabels(['False', 'True'])
-    ax.yaxis.set_ticklabels(['False', 'True'])
-
-    # Display the visualization of the Confusion Matrix.
-    plt.show()
-
-
 # Generate metrics matrix
 def metrics(actual, pred):
     print('accuracy: %s%%' % round(accuracy_score(actual, pred)*100, 0))
@@ -66,38 +38,32 @@ def metrics(actual, pred):
     print('f1_score: %s%%' % round(f1_score(actual, pred)*100, 0))
 
 
-# Converting the text to lower case
-df['Text'] = df['Text'].astype(str).apply(lambda x: x.lower())
-# Remove "=" symbol from data
-df['Text'] = df['Text'].apply(lambda x: x.replace("=", ''))
-# Extracting url from the text
-df['Url'] = df['Text'].apply(lambda x: re.findall("http\S+", x))
-# Create new feature called Url_Count
-df['Url_Count'] = df['Url'].apply(lambda x: len(x))
-# Extracting email from the text
-df['Email'] = df['Text'].apply(lambda x: re.findall(
-    r"[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+", x))
-# Create new feature called Email_Count
-df['Email_Count'] = df['Email'].apply(lambda x: len(x))
-# Removing all symbols from the text except the "$" symbol
-df['Text'] = df["Text"].apply(lambda x: re.sub('[^a-z$\s]', '', x))
-df["Text_Length"] = df["Text"].apply(lambda x: len(x))
+def clean_text(df):
+    # Converting the text to lower case
+    df['Text'] = df['Text'].astype(str).apply(lambda x: x.lower())
+    # Remove "=" symbol from data and replace "\n" with " "
+    df['Text'] = df['Text'].apply(lambda x: x.replace("=", ''))
+    df['Text'] = df['Text'].apply(lambda x: x.replace("\n", ' '))
+    # Extracting url from the text
+    df['Url'] = df['Text'].apply(lambda x: re.findall("http\S+", x))
+    # Create new feature called Url_Count
+    df['Url_Count'] = df['Url'].apply(lambda x: len(x))
+    # Extracting email from the text
+    df['Email'] = df['Text'].apply(lambda x: re.findall(
+        r"[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+", x))
+    # Create new feature called Email_Count
+    df['Email_Count'] = df['Email'].apply(lambda x: len(x))
+    # Removing all symbols from the text except the "$" symbol
+    df['Text'] = df["Text"].apply(lambda x: re.sub('[^a-z$\s]', '', x))
+    df["Text_Length"] = df["Text"].apply(lambda x: len(x))
+    # Removing stop words part 1: Tokenising the text
+    df['Text_Tokens'] = df["Text"].apply(lambda x: word_tokenize(x))
+    # Removing stop words part 2: Removing stopwords
+    df['Text_Filtered'] = df['Text_Tokens'].apply(lambda x: remove_stop_words(x))
+
+    return df
 
 
-# Drop outliers in Url_Count
-range = df['Url_Count'].mean() + df['Url_Count'].std()*3
-df = df.loc[(df["Url_Count"] <= range)]
-# Drop outliers in Email_Count
-range = df['Email_Count'].mean() + df['Email_Count'].std()*3
-df = df.loc[(df["Email_Count"] <= range)]
-# Drop outliers in Text_Length
-range = df['Text_Length'].mean() + df['Text_Length'].std()*3
-df = df.loc[(df["Text_Length"] <= range)]
-
-
-# Removing stop words part 1: Tokenising the text
-df['Text_Tokens'] = df["Text"].apply(lambda x: word_tokenize(x))
-# Removing stop words part 2: Removing stopwords
 def remove_stop_words(word_tokens):
     nltk_stop_words = stopwords.words('english')
     custom_stop_words = ['.', ',']
@@ -107,20 +73,33 @@ def remove_stop_words(word_tokens):
         if w not in combined_stop_words:
             filtered_sentence.append(w)
     return (filtered_sentence)
-df['Text_Filtered'] = df['Text_Tokens'].apply(lambda x: remove_stop_words(x))
 
 
-# Lemmatize the list of words
-wnl = WordNetLemmatizer()
-def lemmatize(s):
-    s = [wnl.lemmatize(word) for word in s]
-    return s
-df['Text_Filtered_Lemmatized'] = df['Text_Filtered'].apply(
-    lambda x: lemmatize(x))
-# Join the word tokens into strings
-df['Text_Filtered_String'] = df['Text_Filtered_Lemmatized'].apply(
-    lambda x: ' '.join(x))
-df['Url_Present'] = df["Url_Count"].apply(lambda x: 1 if x > 0 else 0)
+def lemmatize(df):
+    # Lemmatize the list of words
+    wnl = WordNetLemmatizer()
+
+    def lemmatize(s):
+        s = [wnl.lemmatize(word) for word in s]
+        return s
+    df['Text_Filtered_Lemmatized'] = df['Text_Filtered'].apply(
+        lambda x: lemmatize(x))
+    # Join the word tokens into strings
+    df['Text_Filtered_String'] = df['Text_Filtered_Lemmatized'].apply(
+        lambda x: ' '.join(x))
+    df['Url_Present'] = df["Url_Count"].apply(lambda x: 1 if x > 0 else 0)
+
+    return df
+
+
+def clean_df(df):
+    df = clean_text(df)
+    df = lemmatize(df)
+
+    return df
+
+
+df = clean_df(df)
 
 
 ######################## TEXT MESSAGE ANALYSIS MODELS ########################
@@ -138,20 +117,13 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 vectorizer = TfidfVectorizer()
 X_train_idf = vectorizer.fit_transform(X_train)
+with open('./models/text_nb_vectorizer.pkl', 'wb') as file:
+    pickle.dump(vectorizer, file)
+
 nb = MultinomialNB()
 nb.fit(X_train_idf, y_train)
-X_test_idf = vectorizer.transform(X_test)
-y_pred = nb.predict(X_test_idf)
-metrics(y_test, y_pred)
-with open('text_nb.pkl', 'wb') as file:
+with open('./models/text_nb.pkl', 'wb') as file:
     pickle.dump(nb, file)
-
-
-# Model 3 - SVM
-clf = svm.SVC(kernel='linear')
-clf.fit(X_train_idf, y_train)
-y_pred = clf.predict(X_test_idf)
-y_pred_model_svm = clf.predict(X_test_idf)
-metrics(y_test, y_pred)
-with open('text_svm.pkl', 'wb') as file:
-    pickle.dump(clf, file)
+# X_test_idf = vectorizer.transform(X_test)
+# y_pred = nb.predict(X_test_idf)
+# metrics(y_test, y_pred)
