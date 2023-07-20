@@ -23,6 +23,10 @@ After that, we will combine the models together to form an Ensemble Model. The E
 Finally, we will get the performance of the Ensemble Model and compare the results with that of other models respectively.
 
 ## Some Results
+While the final Ensemble Model does seem to have some suspicious results, the accuracy of each individual models are still relatively high. Here are some of them:
 ![email text analysis results](/images/email_text_results.png?raw=true "email text analysis results")
 ![email text sentiment subjectivity score results](/images/email_text_sentiment_results.png?raw=true "email text sentiment subjectivity score analysis results")
 ![url results](/images/url_results.png?raw=true "url analysis results")
+
+## Future works
+Chrome extension that can automate detection and analysis of gmail content, presenting individual model results 
