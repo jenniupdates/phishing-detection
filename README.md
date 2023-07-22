@@ -34,4 +34,4 @@ Here are some of them (based on original ipynb results):
 
 ## Future works
 1. Chrome extension that can automate detection and analysis of gmail content, presenting individual model results 
-2. Allow model to be used as Web API
+2. Allow model to be used as Web API or pickle package
